@@ -4,117 +4,15 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>SmartLink Generator</title>
-  <style>
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      background: linear-gradient(to right, #141E30, #243B55);
-      color: white;
-      text-align: center;
-      padding: 30px;
-    }
-
-    .logo {
-      width: 90px;
-      height: auto;
-      margin-bottom: 12px;
-    }
-
-    .tagline {
-      font-size: 16px;
-      font-style: italic;
-      color: #cccccc;
-      margin-bottom: 30px;
-    }
-
-    .container {
-      max-width: 500px;
-      margin: auto;
-      background-color: rgba(255, 255, 255, 0.05);
-      padding: 25px 20px;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-    }
-
-    input, button {
-      padding: 14px;
-      margin-top: 8px;
-      width: 100%;
-      border-radius: 6px;
-      border: none;
-      font-size: 15px;
-      box-sizing: border-box;
-    }
-
-    button {
-      margin-top: 16px;
-      background-color: #28a745;
-      color: white;
-      cursor: pointer;
-      font-weight: bold;
-    }
-
-    .clear-btn {
-      background-color: #dc3545;
-      margin-top: 10px;
-    }
-
-    .desc {
-      font-size: 12.5px;
-      color: #cccccc;
-      margin-top: 4px;
-      margin-bottom: 14px;
-      text-align: left;
-    }
-
-    label {
-      display: block;
-      margin-bottom: 10px;
-      text-align: left;
-    }
-
-    h1 {
-      font-size: 24px;
-      margin-bottom: 16px;
-    }
-
-    #output {
-      margin-top: 30px;
-      font-weight: bold;
-      word-break: break-word;
-    }
-
-    a {
-      color: #00d8ff;
-    }
-
-    .copy-msg {
-      color: #0f0;
-      font-size: 13px;
-      margin-top: 10px;
-    }
-
-    @media (max-width: 480px) {
-      body {
-        padding: 20px;
-      }
-      h1 {
-        font-size: 20px;
-      }
-      .container {
-        padding: 20px 15px;
-      }
-      input, button {
-        font-size: 14px;
-      }
-    }
-  </style>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <img src="logo.png" alt="SmartLink Logo" class="logo" />
   <h1>SmartLink.io</h1>
   <div class="tagline">Track smarter. Share better.</div>
 
-  <div class="container">
+  <!-- Standard SmartLink Form -->
+  <div class="container" id="standardForm">
     <form id="linkForm">
       <label>
         <strong>Destination URL (real website):</strong>
@@ -142,6 +40,45 @@
     <div id="copyMessage" class="copy-msg"></div>
   </div>
 
+  <!-- AI Persona Generator Feature -->
+  <div class="container" style="margin-top: 40px;">
+    <h3>🧠 Create a Social Persona</h3>
+    <p style="font-size: 14px; color: #ccc; margin-bottom: 10px;">Use AI to build a realistic-looking profile for Instagram, TikTok, Facebook, X, or OnlyFans.</p>
+
+    <label>
+      <strong>Platform:</strong>
+      <select id="platformSelect">
+        <option value="instagram">Instagram</option>
+        <option value="tiktok">TikTok</option>
+        <option value="facebook">Facebook</option>
+        <option value="x">X (Twitter)</option>
+        <option value="onlyfans">OnlyFans</option>
+      </select>
+    </label>
+
+    <label><strong>First Name (optional):</strong><input type="text" id="firstName" placeholder="e.g., Maya" /></label>
+    <label><strong>Last Name (optional):</strong><input type="text" id="lastName" placeholder="e.g., Johnson" /></label>
+    <label><strong>Age:</strong><input type="number" id="age" placeholder="e.g., 28" /></label>
+    <label><strong>Location (City, Country):</strong><input type="text" id="location" placeholder="e.g., Miami, USA" /></label>
+    <label><strong>Occupation or Niche:</strong><input type="text" id="niche" placeholder="e.g., Fashion Model or Fitness Coach" /></label>
+    <label><strong>Style or Vibe:</strong><input type="text" id="style" placeholder="e.g., Luxury | Trendy | Boho | Streetwear" /></label>
+    <label><strong>Follower Count (optional):</strong><input type="text" id="followers" placeholder="e.g., 10K, 150K, 1M" /></label>
+
+    <button onclick="generatePersona()">Generate Fake Profile</button>
+    <button onclick="clearPersonaForm()" style="margin-top: 10px; background-color: #dc3545; color: white; border: none; padding: 8px 14px; border-radius: 6px; cursor: pointer;">Start Over</button>
+
+    <div id="personaPreview" class="persona-sample" style="display:none; margin-top: 20px; text-align: center; background-color: #1c1f26; padding: 20px; border-radius: 12px;">
+      <img id="profileImage" src="placeholder.png" alt="Profile" style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover; margin-bottom: 10px;">
+      <h4 id="previewName"></h4>
+      <p id="previewBio"></p>
+      <p><strong>Platform:</strong> <span id="previewPlatform"></span></p>
+      <p><strong>Location:</strong> <span id="previewLocation"></span></p>
+      <p><strong>Style:</strong> <span id="previewStyle"></span></p>
+    </div>
+
+    <div id="personaOutput" class="desc" style="margin-top: 16px;"></div>
+  </div>
+
   <script>
     function clearForm() {
       document.getElementById('targetURL').value = '';
@@ -151,73 +88,66 @@
       document.getElementById('copyMessage').innerText = '';
     }
 
-    document.getElementById('linkForm').addEventListener('submit', async function(e) {
-      e.preventDefault();
+    function clearPersonaForm() {
+      ['firstName', 'lastName', 'age', 'location', 'niche', 'style', 'followers'].forEach(id => document.getElementById(id).value = '');
+      document.getElementById('personaOutput').innerHTML = '';
+      document.getElementById('personaPreview').style.display = 'none';
+    }
 
-      const pathInput = document.getElementById('customPath');
-      const queryInput = document.getElementById('customQuery');
-      const targetInput = document.getElementById('targetURL');
+    function updatePreview() {
+      const firstName = document.getElementById('firstName').value.trim();
+      const lastName = document.getElementById('lastName').value.trim();
+      const age = document.getElementById('age').value.trim();
+      const platform = document.getElementById('platformSelect').value;
+      const location = document.getElementById('location').value.trim();
+      const niche = document.getElementById('niche').value.trim();
+      const style = document.getElementById('style').value.trim();
+      const followers = document.getElementById('followers').value.trim();
 
-      let path = pathInput.value.trim();
-      const query = queryInput.value.trim();
-      const target = targetInput.value.trim();
+      if (age && location && niche && style) {
+        document.getElementById('personaPreview').style.display = 'block';
+        const nameStr = firstName || lastName ? `${firstName} ${lastName}`.trim() : '(AI-generated name)';
+        document.getElementById('previewName').innerText = `${nameStr}, ${age}`;
+        document.getElementById('previewBio').innerText = `${niche} | ${followers || 'New'} followers`;
+        document.getElementById('previewPlatform').innerText = platform.toUpperCase();
+        document.getElementById('previewLocation').innerText = location;
+        document.getElementById('previewStyle').innerText = style;
+      }
+    }
 
-      if (!target || !/^https?:\/\//i.test(target)) {
-        alert("Please enter a valid URL starting with http:// or https://");
-        return;
+    document.querySelectorAll('#firstName, #lastName, #age, #location, #niche, #style, #followers, #platformSelect')
+      .forEach(el => el.addEventListener('input', updatePreview));
+
+    async function generatePersona() {
+      const platform = document.getElementById('platformSelect').value;
+      const firstName = document.getElementById('firstName').value.trim();
+      const lastName = document.getElementById('lastName').value.trim();
+      const age = document.getElementById('age').value.trim();
+      const location = document.getElementById('location').value.trim();
+      const niche = document.getElementById('niche').value.trim();
+      const style = document.getElementById('style').value.trim();
+      const followers = document.getElementById('followers').value.trim();
+      const output = document.getElementById('personaOutput');
+
+      if (!age || !location || !niche || !style) {
+        return alert("Please complete all required fields.");
       }
 
-      if (!path) {
-        try {
-          const url = new URL(target);
-          path = url.hostname.replace('www.', '').split('.')[0] + '-link';
-        } catch (err) {
-          return alert('Please enter a valid destination URL.');
-        }
-      }
-
-      const response = await fetch('/create-link', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({ path, query, target })
-      });
-
-      const data = await response.json();
-      const base = window.location.origin;
-      const reportLink = `${base}/report/view/${path}`;
-      const fullLink = `${base}/${data.link}`;
-
-      document.getElementById('output').innerHTML = `
-        <p>🔗 Your SmartLink: <a href="${fullLink}" target="_blank">${fullLink}</a></p>
-        <p>📊 View Report: <a href="${reportLink}" target="_blank">${reportLink}</a></p>
-      `;
+      output.innerHTML = '🧠 Generating persona...';
 
       try {
-        await navigator.clipboard.writeText(fullLink);
-        document.getElementById('copyMessage').innerText = '✅ SmartLink copied to clipboard!';
+        const res = await fetch('/generate-persona', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({ platform, firstName, lastName, age, location, niche, style, followers })
+        });
+        const data = await res.json();
+        output.innerHTML = `✅ Persona generated.`;
       } catch (err) {
-        document.getElementById('copyMessage').innerText = '';
+        console.error(err);
+        output.innerHTML = '❌ Failed to generate persona. Try again later.';
       }
-
-      navigator.geolocation.getCurrentPosition(
-        async function(position) {
-          await fetch('/log-location', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({
-              path: path,
-              coords: {
-                lat: position.coords.latitude,
-                lng: position.coords.longitude
-              }
-            })
-          });
-        },
-        function(error) {
-          console.log('GPS access denied or unavailable');
-        }
-      );
-    });
+    }
   </script>
 </body>
 </html>
