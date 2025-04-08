@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SmartLink Generator</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to right, #141E30, #243B55);
+      color: white;
+      text-align: center;
+      padding: 30px;
+    }
+
+    .logo {
+      width: 90px;
+      height: auto;
+      margin-bottom: 12px;
+    }
+
+    .tagline {
+      font-size: 16px;
+      font-style: italic;
+      color: #cccccc;
+      margin-bottom: 30px;
+    }
+
+    .container {
+      max-width: 500px;
+      margin: auto;
+      background-color: rgba(255, 255, 255, 0.05);
+      padding: 25px 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    }
+
+    input, button {
+      padding: 14px;
+      margin-top: 8px;
+      width: 100%;
+      border-radius: 6px;
+      border: none;
+      font-size: 15px;
+      box-sizing: border-box;
+    }
+
+    button {
+      margin-top: 16px;
+      background-color: #28a745;
+      color: white;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .clear-btn {
+      background-color: #dc3545;
+      margin-top: 10px;
+    }
+
+    .desc {
+      font-size: 12.5px;
+      color: #cccccc;
+      margin-top: 4px;
+      margin-bottom: 14px;
+      text-align: left;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 10px;
+      text-align: left;
+    }
+
+    h1 {
+      font-size: 24px;
+      margin-bottom: 16px;
+    }
+
+    #output {
+      margin-top: 30px;
+      font-weight: bold;
+      word-break: break-word;
+    }
+
+    a {
+      color: #00d8ff;
+    }
+
+    .copy-msg {
+      color: #0f0;
+      font-size: 13px;
+      margin-top: 10px;
+    }
+
+    @media (max-width: 480px) {
+      body {
+        padding: 20px;
+      }
+      h1 {
+        font-size: 20px;
+      }
+      .container {
+        padding: 20px 15px;
+      }
+      input, button {
+        font-size: 14px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <img src="logo.png" alt="SmartLink Logo" class="logo" />
+  <h1>SmartLink.io</h1>
+  <div class="tagline">Track smarter. Share better.</div>
+
+  <div class="container">
+    <form id="linkForm">
+      <label>
+        <strong>Destination URL (real website):</strong>
+        <input type="url" id="targetURL" placeholder="https://example.com" required autocomplete="url" />
+        <div class="desc">This is where the link sends someone after tracking.</div>
+      </label>
+
+      <label>
+        <strong>Custom Path (optional):</strong>
+        <input type="text" id="customPath" placeholder="e.g., apple-launch" autocomplete="off" />
+        <div class="desc">This is how your SmartLink will look — like /apple-launch</div>
+      </label>
+
+      <label>
+        <strong>Custom Query (optional):</strong>
+        <input type="text" id="customQuery" placeholder="e.g., campaign2025=true" autocomplete="off" />
+        <div class="desc">Optional query string to make the link look real (like ?promo=true)</div>
+      </label>
+
+      <button type="submit">Generate SmartLink</button>
+      <button type="button" class="clear-btn" onclick="clearForm()">Clear Form</button>
+    </form>
+
+    <div id="output"></div>
+    <div id="copyMessage" class="copy-msg"></div>
+  </div>
+
+  <script>
+    function clearForm() {
+      document.getElementById('targetURL').value = '';
+      document.getElementById('customPath').value = '';
+      document.getElementById('customQuery').value = '';
+      document.getElementById('output').innerHTML = '';
+      document.getElementById('copyMessage').innerText = '';
+    }
+
+    document.getElementById('linkForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+
+      const pathInput = document.getElementById('customPath');
+      const queryInput = document.getElementById('customQuery');
+      const targetInput = document.getElementById('targetURL');
+
+      let path = pathInput.value.trim();
+      const query = queryInput.value.trim();
+      const target = targetInput.value.trim();
+
+      if (!target || !/^https?:\/\//i.test(target)) {
+        alert("Please enter a valid URL starting with http:// or https://");
+        return;
+      }
+
+      if (!path) {
+        try {
+          const url = new URL(target);
+          path = url.hostname.replace('www.', '').split('.')[0] + '-link';
+        } catch (err) {
+          return alert('Please enter a valid destination URL.');
+        }
+      }
+
+      const response = await fetch('/create-link', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ path, query, target })
+      });
+
+      const data = await response.json();
+      const base = window.location.origin;
+      const reportLink = `${base}/report/view/${path}`;
+      const fullLink = `${base}/${data.link}`;
+
+      document.getElementById('output').innerHTML = `
+        <p>🔗 Your SmartLink: <a href="${fullLink}" target="_blank">${fullLink}</a></p>
+        <p>📊 View Report: <a href="${reportLink}" target="_blank">${reportLink}</a></p>
+      `;
+
+      try {
+        await navigator.clipboard.writeText(fullLink);
+        document.getElementById('copyMessage').innerText = '✅ SmartLink copied to clipboard!';
+      } catch (err) {
+        document.getElementById('copyMessage').innerText = '';
+      }
+
+      navigator.geolocation.getCurrentPosition(
+        async function(position) {
+          await fetch('/log-location', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+              path: path,
+              coords: {
+                lat: position.coords.latitude,
+                lng: position.coords.longitude
+              }
+            })
+          });
+        },
+        function(error) {
+          console.log('GPS access denied or unavailable');
+        }
+      );
+    });
+  </script>
+</body>
+</html>

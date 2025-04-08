@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SmartLink Report</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #0d1117;
+      color: #f5f5f5;
+      padding: 40px 20px;
+      text-align: center;
+    }
+
+    h1 {
+      margin-bottom: 16px;
+      font-size: 28px;
+    }
+
+    .summary {
+      font-size: 16px;
+      margin-bottom: 20px;
+      color: #ccc;
+    }
+
+    .export-buttons {
+      margin-bottom: 25px;
+    }
+
+    .export-buttons button {
+      margin: 0 6px;
+      padding: 8px 14px;
+      border: none;
+      background: #238636;
+      color: white;
+      font-weight: bold;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .export-buttons button:hover {
+      background: #2ea043;
+    }
+
+    table {
+      width: 100%;
+      max-width: 1000px;
+      margin: auto;
+      border-collapse: collapse;
+      background-color: #161b22;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    th, td {
+      padding: 12px 14px;
+      text-align: left;
+    }
+
+    th {
+      background-color: #21262d;
+      color: #f0f0f0;
+    }
+
+    tr:nth-child(even) {
+      background-color: #1c2128;
+    }
+
+    tr:hover {
+      background-color: #2a3038;
+    }
+
+    .back {
+      margin-top: 30px;
+      color: #00d8ff;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .map-link {
+      color: #ffde59;
+      font-size: 13px;
+    }
+
+    .browser-tag {
+      font-size: 13px;
+      color: #ccc;
+    }
+
+    .no-data {
+      font-style: italic;
+      color: #888;
+    }
+  </style>
+</head>
+<body>
+  <h1>📊 SmartLink Report</h1>
+  <div class="summary" id="summary">Loading report...</div>
+
+  <div class="export-buttons" id="exportButtons" style="display: none;">
+    <button onclick="exportToCSV()">Export CSV</button>
+    <button onclick="exportToPDF()">Export PDF</button>
+    <button onclick="window.print()">Print Report</button>
+  </div>
+
+  <table id="logTable" style="display: none;">
+    <thead>
+      <tr>
+        <th>Time</th>
+        <th>IP Address</th>
+        <th>City / State</th>
+        <th>Referrer</th>
+        <th>Device / Browser</th>
+        <th>Location</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <a href="/" class="back">← Back to Home</a>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script>
+    const path = window.location.pathname.split("/").pop();
+    let globalLogs = [];
+
+    function parseUserAgent(ua) {
+      const device = /iPhone/i.test(ua) ? "iPhone" : /Android/i.test(ua) ? "Android" : /Windows/i.test(ua) ? "Windows" : /Mac OS X/i.test(ua) ? "Mac" : "Unknown";
+      const browser = /CriOS/i.test(ua) ? "Chrome iOS" : /Chrome/i.test(ua) ? "Chrome" : /Safari/i.test(ua) && !/Chrome/i.test(ua) ? "Safari" : /Firefox/i.test(ua) ? "Firefox" : "Other";
+      const osMatch = ua.match(/\(([^)]+)\)/);
+      const osInfo = osMatch ? osMatch[1] : "OS unknown";
+      return { device, browser, osInfo };
+    }
+
+    async function getGeoFromIP(ip) {
+      try {
+        const res = await fetch(`https://ipapi.co/${ip}/json/`);
+        if (!res.ok) return null;
+        const data = await res.json();
+        return `${data.city || "Unknown"}, ${data.region || ""}`;
+      } catch {
+        return "Unavailable";
+      }
+    }
+
+    async function loadReport() {
+      try {
+        const res = await fetch(`/api/report/${path}`);
+        const data = await res.json();
+        globalLogs = data.logs;
+
+        document.getElementById("summary").innerHTML = `
+          <strong>Link:</strong> /${data.link}<br>
+          <strong>Destination:</strong> <a href="${data.destination}" target="_blank">${data.destination}</a><br>
+          <strong>Total Clicks:</strong> ${data.totalClicks}
+        `;
+
+        const table = document.getElementById("logTable");
+        const tbody = table.querySelector("tbody");
+
+        if (data.logs.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="6" class="no-data">No logs found for this link yet.</td></tr>`;
+        } else {
+          for (const log of data.logs) {
+            const parsed = parseUserAgent(log.userAgent);
+            const gps = log.gps
+              ? `<a class="map-link" href="https://www.google.com/maps?q=${log.gps.lat},${log.gps.lng}" target="_blank">📍 View on Map</a><br><small>${log.gps.lat.toFixed(3)}, ${log.gps.lng.toFixed(3)}</small>`
+              : `<span class="no-data">Unavailable</span>`;
+
+            const locationStr = await getGeoFromIP(log.ip.replace(/^::ffff:/, ""));
+
+            const row = document.createElement("tr");
+            row.innerHTML = `
+              <td>${new Date(log.time).toLocaleString()}</td>
+              <td>${log.ip}</td>
+              <td>${locationStr}</td>
+              <td>${log.referrer}</td>
+              <td>
+                <strong>${parsed.device}</strong><br>
+                <span class="browser-tag">${parsed.browser}</span><br>
+                <small>${parsed.osInfo}</small>
+              </td>
+              <td>${gps}</td>
+            `;
+            tbody.appendChild(row);
+          }
+        }
+
+        table.style.display = "table";
+        document.getElementById("exportButtons").style.display = "block";
+      } catch (err) {
+        document.getElementById("summary").innerText = "Failed to load report.";
+        console.error("Report load error:", err);
+      }
+    }
+
+    function exportToCSV() {
+      let csv = "Time,IP,City/State,Referrer,Device,Browser,OS,GPS\n";
+      globalLogs.forEach(log => {
+        const parsed = parseUserAgent(log.userAgent);
+        const gps = log.gps ? `${log.gps.lat.toFixed(3)},${log.gps.lng.toFixed(3)}` : "Unavailable";
+        csv += `"${new Date(log.time).toLocaleString()}","${log.ip}","","${log.referrer}","${parsed.device}","${parsed.browser}","${parsed.osInfo}","${gps}"\n`;
+      });
+      const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = `smartlink-report-${path}.csv`;
+      link.click();
+    }
+
+    async function exportToPDF() {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+      doc.setFontSize(16);
+      doc.text("SmartLink Report", 20, 20);
+      doc.setFontSize(10);
+      let y = 30;
+      for (const log of globalLogs) {
+        const parsed = parseUserAgent(log.userAgent);
+        const gps = log.gps ? `${log.gps.lat.toFixed(3)}, ${log.gps.lng.toFixed(3)}` : "Unavailable";
+        doc.text(`• ${new Date(log.time).toLocaleString()}`, 20, y);
+        doc.text(`IP: ${log.ip}`, 20, y + 6);
+        doc.text(`Referrer: ${log.referrer}`, 20, y + 12);
+        doc.text(`Device: ${parsed.device} | Browser: ${parsed.browser}`, 20, y + 18);
+        doc.text(`OS: ${parsed.osInfo}`, 20, y + 24);
+        doc.text(`GPS: ${gps}`, 20, y + 30);
+        y += 42;
+        if (y > 270) { doc.addPage(); y = 20; }
+      }
+      doc.save(`smartlink-report-${path}.pdf`);
+    }
+
+    loadReport();
+  </script>
+</body>
+</html>
