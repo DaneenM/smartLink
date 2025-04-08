@@ -94,7 +94,7 @@ View Report: http://localhost:3000/report/view/my-promo
 ---
 
 ## ❤️ Credits
-Made with passion by [You]. Powered by Node.js + HTML.
+Made with passion by Daneen Mays. Powered by Node.js + HTML.
 
 ---
 
