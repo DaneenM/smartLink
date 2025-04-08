@@ -1,13 +1,20 @@
+require('dotenv').config();
 const express = require('express');
 const fs = require('fs');
 const path = require('path');
 const fetch = require('node-fetch');
+const OpenAI = require('openai'); // ✅ NEW
 
 const app = express();
 const PORT = 3000;
 
 app.use(express.json());
 app.use(express.static('public'));
+
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY
+});
+
 
 let links = [];
 let personas = [];
@@ -20,39 +27,95 @@ app.post('/create-link', (req, res) => {
   res.json({ link });
 });
 
-// 🧠 AI Persona Generator
-app.post('/generate-persona', (req, res) => {
-  const { platform, firstName, lastName, age, location, niche, style, followers } = req.body;
+// 🧠 AI Persona Generator (OpenAI + Scalability AI)
+app.post('/generate-persona', async (req, res) => {
+  const { platform, firstName, lastName, nickname, age, location, niche, style, followers } = req.body;
 
   if (!age || !location || !niche || !style) {
     return res.status(400).json({ error: 'Missing required persona details.' });
   }
 
-  const fullName = (firstName || lastName) 
-    ? `${firstName || ''} ${lastName || ''}`.trim() 
+  const fullName = (firstName || lastName)
+    ? `${firstName || ''} ${lastName || ''}`.trim()
     : generateRandomName();
 
   const id = `${fullName.toLowerCase().replace(/\s+/g, '-')}-${Date.now()}`;
+
+  let generatedNickname = nickname;
+  let generatedBio = '';
+
+  // If nickname is not manually provided, use AI
+  if (!nickname) {
+    const prompt = `Create a realistic social media username (no @ symbol) and short engaging bio for a fake ${platform} influencer, aged ${age}, based in ${location}, working in the ${niche} niche with a ${style} vibe. Return it in the format:
+Username: [value]
+Bio: [value]`;
+
+    try {
+      // Primary: OpenAI
+      const aiRes = await openai.createChatCompletion({
+        model: 'gpt-3.5-turbo',
+        messages: [{ role: 'user', content: prompt }],
+        temperature: 0.9
+      });
+
+      const text = aiRes.data.choices[0].message.content;
+      const [usernameLine, bioLine] = text.split('\n').filter(Boolean);
+
+      generatedNickname = usernameLine?.replace(/^Username:\s*/i, '').replace('@', '').trim() || 'user_' + Date.now();
+      generatedBio = bioLine?.replace(/^Bio:\s*/i, '').trim() || '';
+
+    } catch (err) {
+      console.warn('⚠️ OpenAI failed. Switching to Scalability AI...');
+
+      try {
+        // Fallback: Scalability AI
+        const scaleRes = await fetch('https://api.scalability.ai/v1/text/generate', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${process.env.SCALABILITY_API_KEY}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            model: 'gpt-3.5-turbo',
+            messages: [{ role: 'user', content: prompt }],
+            temperature: 0.9
+          })
+        });
+
+        const scaleData = await scaleRes.json();
+        const scaleText = scaleData.choices?.[0]?.message?.content || '';
+        const [usernameLine, bioLine] = scaleText.split('\n').filter(Boolean);
+
+        generatedNickname = usernameLine?.replace(/^Username:\s*/i, '').replace('@', '').trim() || 'user_' + Date.now();
+        generatedBio = bioLine?.replace(/^Bio:\s*/i, '').trim() || '';
+
+      } catch (fallbackErr) {
+        console.error('❌ Both OpenAI and Scalability AI failed:', fallbackErr.message);
+        generatedNickname = 'user_' + Date.now();
+        generatedBio = '';
+      }
+    }
+  }
 
   const persona = {
     id,
     name: fullName,
     platform,
+    username: generatedNickname,
     age,
     location,
     niche,
     style,
     followers: followers || 'New',
+    bio: generatedBio,
     profileImage: `https://ui-avatars.com/api/?name=${encodeURIComponent(fullName)}&background=random`
   };
 
-  // Save as JSON (you can change to DB later)
   const filePath = path.join(__dirname, 'public', 'personas', `${id}.json`);
   fs.mkdirSync(path.dirname(filePath), { recursive: true });
   fs.writeFileSync(filePath, JSON.stringify(persona, null, 2));
 
   personas.push(persona);
-
   res.json({ success: true, persona });
 });
 
@@ -95,7 +158,7 @@ app.get('/api/report/:path', (req, res) => {
   }
 });
 
-// 🚦 Redirect & Log Catch-All Handler
+// 🚦 Redirect Handler
 app.get('/:path', (req, res) => {
   const fullUrl = req.originalUrl.slice(1);
   const matchedLink = links.find(l => l.link === fullUrl || l.link === req.params.path);

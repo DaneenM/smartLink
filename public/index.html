@@ -56,8 +56,9 @@
       </select>
     </label>
 
-    <label><strong>First Name (optional):</strong><input type="text" id="firstName" placeholder="e.g., Maya" /></label>
-    <label><strong>Last Name (optional):</strong><input type="text" id="lastName" placeholder="e.g., Johnson" /></label>
+    <label><strong>First Name (optional):</strong><input type="text" id="firstName" placeholder="e.g., First name" /></label>
+    <label><strong>Last Name (optional):</strong><input type="text" id="lastName" placeholder="e.g., Last name" /></label>
+    <label><strong>Username Inspiration or Nickname:</strong><input type="text" id="nickname" placeholder="e.g., glamqueen or badgyal" /></label>
     <label><strong>Age:</strong><input type="number" id="age" placeholder="e.g., 28" /></label>
     <label><strong>Location (City, Country):</strong><input type="text" id="location" placeholder="e.g., Miami, USA" /></label>
     <label><strong>Occupation or Niche:</strong><input type="text" id="niche" placeholder="e.g., Fashion Model or Fitness Coach" /></label>
@@ -69,7 +70,8 @@
 
     <div id="personaPreview" class="persona-sample" style="display:none; margin-top: 20px; text-align: center; background-color: #1c1f26; padding: 20px; border-radius: 12px;">
       <img id="profileImage" src="placeholder.png" alt="Profile" style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover; margin-bottom: 10px;">
-      <h4 id="previewName"></h4>
+      <h4 id="previewUsername"></h4>
+      <p id="previewName"></p>
       <p id="previewBio"></p>
       <p><strong>Platform:</strong> <span id="previewPlatform"></span></p>
       <p><strong>Location:</strong> <span id="previewLocation"></span></p>
@@ -89,7 +91,9 @@
     }
 
     function clearPersonaForm() {
-      ['firstName', 'lastName', 'age', 'location', 'niche', 'style', 'followers'].forEach(id => document.getElementById(id).value = '');
+      ['firstName', 'lastName', 'nickname', 'age', 'location', 'niche', 'style', 'followers'].forEach(id => {
+        document.getElementById(id).value = '';
+      });
       document.getElementById('personaOutput').innerHTML = '';
       document.getElementById('personaPreview').style.display = 'none';
     }
@@ -97,6 +101,7 @@
     function updatePreview() {
       const firstName = document.getElementById('firstName').value.trim();
       const lastName = document.getElementById('lastName').value.trim();
+      const nickname = document.getElementById('nickname').value.trim();
       const age = document.getElementById('age').value.trim();
       const platform = document.getElementById('platformSelect').value;
       const location = document.getElementById('location').value.trim();
@@ -107,6 +112,9 @@
       if (age && location && niche && style) {
         document.getElementById('personaPreview').style.display = 'block';
         const nameStr = firstName || lastName ? `${firstName} ${lastName}`.trim() : '(AI-generated name)';
+        const fakeUsername = nickname ? nickname : `(username based on AI)`;
+
+        document.getElementById('previewUsername').innerText = `@${fakeUsername}`;
         document.getElementById('previewName').innerText = `${nameStr}, ${age}`;
         document.getElementById('previewBio').innerText = `${niche} | ${followers || 'New'} followers`;
         document.getElementById('previewPlatform').innerText = platform.toUpperCase();
@@ -115,13 +123,14 @@
       }
     }
 
-    document.querySelectorAll('#firstName, #lastName, #age, #location, #niche, #style, #followers, #platformSelect')
+    document.querySelectorAll('#firstName, #lastName, #nickname, #age, #location, #niche, #style, #followers, #platformSelect')
       .forEach(el => el.addEventListener('input', updatePreview));
 
     async function generatePersona() {
       const platform = document.getElementById('platformSelect').value;
       const firstName = document.getElementById('firstName').value.trim();
       const lastName = document.getElementById('lastName').value.trim();
+      const nickname = document.getElementById('nickname').value.trim();
       const age = document.getElementById('age').value.trim();
       const location = document.getElementById('location').value.trim();
       const niche = document.getElementById('niche').value.trim();
@@ -139,13 +148,29 @@
         const res = await fetch('/generate-persona', {
           method: 'POST',
           headers: {'Content-Type': 'application/json'},
-          body: JSON.stringify({ platform, firstName, lastName, age, location, niche, style, followers })
+          body: JSON.stringify({ platform, firstName, lastName, nickname, age, location, niche, style, followers })
         });
+
         const data = await res.json();
-        output.innerHTML = `✅ Persona generated.`;
+        if (data.success) {
+          const { username, name, bio, profileImage } = data.persona;
+
+          document.getElementById('personaPreview').style.display = 'block';
+          document.getElementById('previewUsername').innerText = `@${username}`;
+          document.getElementById('previewName').innerText = `${name}, ${age}`;
+          document.getElementById('previewBio').innerText = bio || `${niche} | ${followers || 'New'} followers`;
+          document.getElementById('previewPlatform').innerText = platform.toUpperCase();
+          document.getElementById('previewLocation').innerText = location;
+          document.getElementById('previewStyle').innerText = style;
+          document.getElementById('profileImage').src = profileImage;
+
+          output.innerHTML = '✅ Persona generated.';
+        } else {
+          output.innerHTML = '❌ Failed to generate persona. Please try again.';
+        }
       } catch (err) {
         console.error(err);
-        output.innerHTML = '❌ Failed to generate persona. Try again later.';
+        output.innerHTML = '❌ Server error. Try again later.';
       }
     }
   </script>
