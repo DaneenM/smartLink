@@ -1,0 +1,79 @@
+{
+  "id": "daneen-1744222417778",
+  "name": "Daneen",
+  "platform": "instagram",
+  "username": "user_1744222417778",
+  "age": "29",
+  "location": "USA",
+  "niche": "Dancer",
+  "style": "trendy",
+  "race": "White",
+  "followers": "1k",
+  "bio": "Dancer influencer.",
+  "profileImage": "https://placehold.co/300x300?text=Image",
+  "posts": [
+    {
+      "image": "https://placehold.co/300x300?text=Image",
+      "caption": "Loving this vibe today ✨ #Dancer #trendy",
+      "likes": 600,
+      "comments": 62,
+      "timestamp": "1h"
+    },
+    {
+      "image": "https://placehold.co/300x300?text=Image",
+      "caption": "Loving this vibe today ✨ #Dancer #trendy",
+      "likes": 4353,
+      "comments": 77,
+      "timestamp": "10h"
+    },
+    {
+      "image": "https://placehold.co/300x300?text=Image",
+      "caption": "Loving this vibe today ✨ #Dancer #trendy",
+      "likes": 3288,
+      "comments": 98,
+      "timestamp": "7h"
+    },
+    {
+      "image": "https://placehold.co/300x300?text=Image",
+      "caption": "Loving this vibe today ✨ #Dancer #trendy",
+      "likes": 3303,
+      "comments": 15,
+      "timestamp": "8h"
+    },
+    {
+      "image": "https://placehold.co/300x300?text=Image",
+      "caption": "Loving this vibe today ✨ #Dancer #trendy",
+      "likes": 4952,
+      "comments": 92,
+      "timestamp": "6h"
+    },
+    {
+      "image": "https://placehold.co/300x300?text=Image",
+      "caption": "Loving this vibe today ✨ #Dancer #trendy",
+      "likes": 716,
+      "comments": 186,
+      "timestamp": "2h"
+    },
+    {
+      "image": "https://placehold.co/300x300?text=Image",
+      "caption": "Loving this vibe today ✨ #Dancer #trendy",
+      "likes": 3414,
+      "comments": 254,
+      "timestamp": "7h"
+    },
+    {
+      "image": "https://placehold.co/300x300?text=Image",
+      "caption": "Loving this vibe today ✨ #Dancer #trendy",
+      "likes": 4350,
+      "comments": 303,
+      "timestamp": "9h"
+    },
+    {
+      "image": "https://placehold.co/300x300?text=Image",
+      "caption": "Loving this vibe today ✨ #Dancer #trendy",
+      "likes": 2524,
+      "comments": 176,
+      "timestamp": "6h"
+    }
+  ]
+}

@@ -1,0 +1,79 @@
+{
+  "id": "jessica-merez-1744222380897",
+  "name": "Jessica Merez",
+  "platform": "instagram",
+  "username": "user_1744222380898",
+  "age": "32",
+  "location": "Brooklyn, NYC",
+  "niche": "Fashion Model",
+  "style": "Luxury",
+  "race": "Latina",
+  "followers": "4k",
+  "bio": "Fashion Model influencer.",
+  "profileImage": "https://placehold.co/300x300?text=Image",
+  "posts": [
+    {
+      "image": "https://placehold.co/300x300?text=Image",
+      "caption": "Loving this vibe today ✨ #FashionModel #Luxury",
+      "likes": 1159,
+      "comments": 290,
+      "timestamp": "2h"
+    },
+    {
+      "image": "https://placehold.co/300x300?text=Image",
+      "caption": "Loving this vibe today ✨ #FashionModel #Luxury",
+      "likes": 4193,
+      "comments": 132,
+      "timestamp": "6h"
+    },
+    {
+      "image": "https://placehold.co/300x300?text=Image",
+      "caption": "Loving this vibe today ✨ #FashionModel #Luxury",
+      "likes": 3428,
+      "comments": 219,
+      "timestamp": "4h"
+    },
+    {
+      "image": "https://placehold.co/300x300?text=Image",
+      "caption": "Loving this vibe today ✨ #FashionModel #Luxury",
+      "likes": 2150,
+      "comments": 52,
+      "timestamp": "3h"
+    },
+    {
+      "image": "https://placehold.co/300x300?text=Image",
+      "caption": "Loving this vibe today ✨ #FashionModel #Luxury",
+      "likes": 1653,
+      "comments": 243,
+      "timestamp": "6h"
+    },
+    {
+      "image": "https://placehold.co/300x300?text=Image",
+      "caption": "Loving this vibe today ✨ #FashionModel #Luxury",
+      "likes": 3393,
+      "comments": 48,
+      "timestamp": "1h"
+    },
+    {
+      "image": "https://placehold.co/300x300?text=Image",
+      "caption": "Loving this vibe today ✨ #FashionModel #Luxury",
+      "likes": 2449,
+      "comments": 45,
+      "timestamp": "7h"
+    },
+    {
+      "image": "https://placehold.co/300x300?text=Image",
+      "caption": "Loving this vibe today ✨ #FashionModel #Luxury",
+      "likes": 4765,
+      "comments": 132,
+      "timestamp": "5h"
+    },
+    {
+      "image": "https://placehold.co/300x300?text=Image",
+      "caption": "Loving this vibe today ✨ #FashionModel #Luxury",
+      "likes": 2052,
+      "comments": 272,
+      "timestamp": "1h"
+    }
+  ]
+}

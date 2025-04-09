@@ -1,0 +1,79 @@
+{
+  "id": "melissa-james-1744223034136",
+  "name": "Melissa James",
+  "platform": "instagram",
+  "username": "user_1744223034136",
+  "age": "29",
+  "location": "Tampa",
+  "niche": "Fitness coach",
+  "style": "Working out at the gym",
+  "race": "Latina",
+  "followers": "15k",
+  "bio": "Fitness coach influencer.",
+  "profileImage": "https://placehold.co/300x300?text=Image",
+  "posts": [
+    {
+      "image": "https://placehold.co/300x300?text=Image",
+      "caption": "Loving this vibe today ✨ #Fitnesscoach #Workingoutatthegym",
+      "likes": 3362,
+      "comments": 94,
+      "timestamp": "8h"
+    },
+    {
+      "image": "https://placehold.co/300x300?text=Image",
+      "caption": "Loving this vibe today ✨ #Fitnesscoach #Workingoutatthegym",
+      "likes": 1976,
+      "comments": 252,
+      "timestamp": "2h"
+    },
+    {
+      "image": "https://placehold.co/300x300?text=Image",
+      "caption": "Loving this vibe today ✨ #Fitnesscoach #Workingoutatthegym",
+      "likes": 2191,
+      "comments": 173,
+      "timestamp": "7h"
+    },
+    {
+      "image": "https://placehold.co/300x300?text=Image",
+      "caption": "Loving this vibe today ✨ #Fitnesscoach #Workingoutatthegym",
+      "likes": 3041,
+      "comments": 92,
+      "timestamp": "3h"
+    },
+    {
+      "image": "https://placehold.co/300x300?text=Image",
+      "caption": "Loving this vibe today ✨ #Fitnesscoach #Workingoutatthegym",
+      "likes": 1570,
+      "comments": 233,
+      "timestamp": "2h"
+    },
+    {
+      "image": "https://placehold.co/300x300?text=Image",
+      "caption": "Loving this vibe today ✨ #Fitnesscoach #Workingoutatthegym",
+      "likes": 4864,
+      "comments": 211,
+      "timestamp": "6h"
+    },
+    {
+      "image": "https://placehold.co/300x300?text=Image",
+      "caption": "Loving this vibe today ✨ #Fitnesscoach #Workingoutatthegym",
+      "likes": 5078,
+      "comments": 41,
+      "timestamp": "2h"
+    },
+    {
+      "image": "https://placehold.co/300x300?text=Image",
+      "caption": "Loving this vibe today ✨ #Fitnesscoach #Workingoutatthegym",
+      "likes": 1765,
+      "comments": 202,
+      "timestamp": "9h"
+    },
+    {
+      "image": "https://placehold.co/300x300?text=Image",
+      "caption": "Loving this vibe today ✨ #Fitnesscoach #Workingoutatthegym",
+      "likes": 2962,
+      "comments": 31,
+      "timestamp": "10h"
+    }
+  ]
+}

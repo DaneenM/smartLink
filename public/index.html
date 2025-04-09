@@ -5,6 +5,20 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>SmartLink Generator</title>
   <link rel="stylesheet" href="style.css" />
+  <style>
+    .loading {
+      font-size: 14px;
+      margin-top: 10px;
+      color: #00d8ff;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0% { opacity: 0.2; }
+      50% { opacity: 1; }
+      100% { opacity: 0.2; }
+    }
+  </style>
 </head>
 <body>
   <img src="logo.png" alt="SmartLink Logo" class="logo" />
@@ -64,7 +78,7 @@
     <label><strong>Race or Ethnicity:</strong><input type="text" id="race" placeholder="e.g., Black, Latina, White, South Asian" /></label>
     <label><strong>Follower Count (optional):</strong><input type="text" id="followers" placeholder="e.g., 10K, 150K, 1M" /></label>
 
-    <button onclick="generatePersona()">Generate Agent Profile</button>
+    <button id="generateBtn" onclick="generatePersona()">Generate Agent Profile</button>
     <button onclick="clearPersonaForm()" style="margin-top: 10px; background-color: #dc3545; color: white; border: none; padding: 8px 14px; border-radius: 6px; cursor: pointer;">Start Over</button>
 
     <div id="personaPreview" class="persona-sample" style="display:none; margin-top: 20px; text-align: center; background-color: #1c1f26; padding: 20px; border-radius: 12px;">
@@ -78,7 +92,7 @@
       <p><strong>Race:</strong> <span id="previewRace"></span></p>
     </div>
 
-    <div id="personaOutput" class="desc" style="margin-top: 16px;"></div>
+    <div id="personaOutput" class="desc loading"></div>
   </div>
 
   <script>
@@ -96,6 +110,7 @@
       });
       document.getElementById('personaOutput').innerHTML = '';
       document.getElementById('personaPreview').style.display = 'none';
+      document.getElementById('profileImage').src = 'placeholder.png';
     }
 
     function updatePreview() {
@@ -140,23 +155,25 @@
       const race = document.getElementById('race').value.trim();
       const followers = document.getElementById('followers').value.trim();
       const output = document.getElementById('personaOutput');
+      const btn = document.getElementById('generateBtn');
 
       if (!age || !location || !niche || !style || !race) {
         return alert("Please complete all required fields.");
       }
 
-      output.innerHTML = '🧠 Generating persona...';
+      btn.disabled = true;
+      output.innerHTML = '🧠 Generating persona and images... please wait 30–60 seconds';
 
       try {
         const res = await fetch('/generate-persona', {
           method: 'POST',
-          headers: {'Content-Type': 'application/json'},
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ platform, firstName, lastName, nickname, age, location, niche, style, race, followers })
         });
 
         const data = await res.json();
         if (data.success) {
-          const { username, name, bio, profileImage, id } = data.persona;
+          const { username, name, bio, profileImage } = data.persona;
 
           document.getElementById('personaPreview').style.display = 'block';
           document.getElementById('previewUsername').innerText = `@${username}`;
@@ -168,19 +185,15 @@
           document.getElementById('previewRace').innerText = race;
           document.getElementById('profileImage').src = profileImage;
 
-          await fetch('/generate-instagram-profile', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ personaId: id })
-          });
-
-          output.innerHTML = `✅ Persona generated. <br><a href="/profiles/${username}.html" target="_blank">👉 View Full Profile</a>`;
+          output.innerHTML = `✅ Persona generated.<br><br><a href="${data.profileUrl}" target="_blank" style="display:inline-block; background:#00d8ff; color:#000; font-weight:600; padding:8px 16px; border-radius:8px; text-decoration:none;">👉 View Full Profile</a>`;
         } else {
           output.innerHTML = '❌ Failed to generate persona. Please try again.';
         }
       } catch (err) {
         console.error(err);
         output.innerHTML = '❌ Server error. Try again later.';
+      } finally {
+        btn.disabled = false;
       }
     }
   </script>
