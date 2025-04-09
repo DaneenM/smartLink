@@ -1,9 +1,11 @@
+// 📁 server.js (complete)
 require('dotenv').config();
 const express = require('express');
 const fs = require('fs');
 const path = require('path');
 const fetch = require('node-fetch');
-const OpenAI = require('openai'); // ✅ NEW
+const OpenAI = require('openai');
+const mustache = require('mustache');
 
 const app = express();
 const PORT = 3000;
@@ -11,91 +13,102 @@ const PORT = 3000;
 app.use(express.json());
 app.use(express.static('public'));
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY
-});
+const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
+// 🔥 Replicate image generation function
+async function generateImagesFromReplicate(prompt, count = 27) {
+  const replicateRes = await fetch('https://api.replicate.com/v1/predictions', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Token ${process.env.REPLICATE_API_TOKEN}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      version: "c8c9fc4c50fc0ce2d5e3c0cfc29206d7bb9c38fd6089d444e5d18e9b5e65dcae", // Model that supports consistent faces
+      input: {
+        prompt,
+        num_outputs: count,
+        guidance_scale: 7.5,
+        num_inference_steps: 30
+      }
+    })
+  });
 
-let links = [];
-let personas = [];
+  const replicateJson = await replicateRes.json();
+  const predictionUrl = replicateJson.urls?.get;
+  if (!predictionUrl) throw new Error('No Replicate prediction URL.');
 
-// 🔗 SmartLink Generator
-app.post('/create-link', (req, res) => {
-  const { path, query, target } = req.body;
-  const link = `${path}${query ? '?' + query : ''}`;
-  links.push({ link, target, logs: [], type: 'standard' });
-  res.json({ link });
-});
+  let images = [];
+  for (let i = 0; i < 60; i++) {
+    await new Promise(r => setTimeout(r, 3000));
+    const statusRes = await fetch(predictionUrl, {
+      headers: { 'Authorization': `Token ${process.env.REPLICATE_API_TOKEN}` }
+    });
+    const statusJson = await statusRes.json();
+    if (statusJson.status === 'succeeded') {
+      images = statusJson.output;
+      break;
+    } else if (statusJson.status === 'failed') {
+      throw new Error('Image generation failed.');
+    }
+  }
+  return images;
+}
 
-// 🧠 AI Persona Generator (OpenAI + Scalability AI)
+// 🧠 Generate Persona
 app.post('/generate-persona', async (req, res) => {
-  const { platform, firstName, lastName, nickname, age, location, niche, style, followers } = req.body;
+  const { platform, firstName, lastName, nickname, age, location, niche, style, race, followers } = req.body;
 
-  if (!age || !location || !niche || !style) {
-    return res.status(400).json({ error: 'Missing required persona details.' });
+  if (!age || !location || !niche || !style || !race) {
+    return res.status(400).json({ error: 'Missing required persona fields.' });
   }
 
   const fullName = (firstName || lastName)
     ? `${firstName || ''} ${lastName || ''}`.trim()
     : generateRandomName();
-
   const id = `${fullName.toLowerCase().replace(/\s+/g, '-')}-${Date.now()}`;
+
+  const aiPrompt = `Create a username and Instagram bio for a ${age}-year-old ${race} influencer from ${location}, niche: ${niche}, style: ${style}. Format:
+Username: [username]
+Bio: [bio]`;
 
   let generatedNickname = nickname;
   let generatedBio = '';
 
-  // If nickname is not manually provided, use AI
-  if (!nickname) {
-    const prompt = `Create a realistic social media username (no @ symbol) and short engaging bio for a fake ${platform} influencer, aged ${age}, based in ${location}, working in the ${niche} niche with a ${style} vibe. Return it in the format:
-Username: [value]
-Bio: [value]`;
+  try {
+    const aiRes = await openai.createChatCompletion({
+      model: 'gpt-3.5-turbo',
+      messages: [{ role: 'user', content: aiPrompt }],
+      temperature: 0.8
+    });
 
-    try {
-      // Primary: OpenAI
-      const aiRes = await openai.createChatCompletion({
-        model: 'gpt-3.5-turbo',
-        messages: [{ role: 'user', content: prompt }],
-        temperature: 0.9
-      });
-
-      const text = aiRes.data.choices[0].message.content;
-      const [usernameLine, bioLine] = text.split('\n').filter(Boolean);
-
-      generatedNickname = usernameLine?.replace(/^Username:\s*/i, '').replace('@', '').trim() || 'user_' + Date.now();
-      generatedBio = bioLine?.replace(/^Bio:\s*/i, '').trim() || '';
-
-    } catch (err) {
-      console.warn('⚠️ OpenAI failed. Switching to Scalability AI...');
-
-      try {
-        // Fallback: Scalability AI
-        const scaleRes = await fetch('https://api.scalability.ai/v1/text/generate', {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${process.env.SCALABILITY_API_KEY}`,
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            model: 'gpt-3.5-turbo',
-            messages: [{ role: 'user', content: prompt }],
-            temperature: 0.9
-          })
-        });
-
-        const scaleData = await scaleRes.json();
-        const scaleText = scaleData.choices?.[0]?.message?.content || '';
-        const [usernameLine, bioLine] = scaleText.split('\n').filter(Boolean);
-
-        generatedNickname = usernameLine?.replace(/^Username:\s*/i, '').replace('@', '').trim() || 'user_' + Date.now();
-        generatedBio = bioLine?.replace(/^Bio:\s*/i, '').trim() || '';
-
-      } catch (fallbackErr) {
-        console.error('❌ Both OpenAI and Scalability AI failed:', fallbackErr.message);
-        generatedNickname = 'user_' + Date.now();
-        generatedBio = '';
-      }
-    }
+    const text = aiRes.data.choices[0].message.content;
+    const [usernameLine, bioLine] = text.split('\n').filter(Boolean);
+    generatedNickname = nickname || usernameLine?.replace(/^Username:\s*/i, '').replace('@', '').trim();
+    generatedBio = bioLine?.replace(/^Bio:\s*/i, '').trim();
+  } catch (err) {
+    console.error('❌ AI username/bio fallback:', err.message);
+    generatedNickname = 'user_' + Date.now();
+    generatedBio = `${niche} influencer.`;
   }
+
+  // 🖼 Generate images
+  const imgPrompt = `${age}-year-old ${race} woman, ${style} aesthetic, ${niche} niche, ultra-realistic, consistent face`;
+  let imageUrls = [];
+  try {
+    imageUrls = await generateImagesFromReplicate(imgPrompt, 27);
+  } catch (err) {
+    console.error('Image generation failed:', err);
+    imageUrls = Array(9).fill('https://placehold.co/300x300?text=Image');
+  }
+
+  const posts = imageUrls.map((url, i) => ({
+    image: url,
+    caption: `Loving this vibe today ✨ #${niche.replace(/\s+/g, '')} #${style.replace(/\s+/g, '')}`,
+    likes: Math.floor(Math.random() * 5000 + 100),
+    comments: Math.floor(Math.random() * 300 + 5),
+    timestamp: `${Math.floor(Math.random() * 10) + 1}h`
+  }));
 
   const persona = {
     id,
@@ -106,81 +119,38 @@ Bio: [value]`;
     location,
     niche,
     style,
+    race,
     followers: followers || 'New',
     bio: generatedBio,
-    profileImage: `https://ui-avatars.com/api/?name=${encodeURIComponent(fullName)}&background=random`
+    profileImage: imageUrls[0],
+    posts
   };
 
-  const filePath = path.join(__dirname, 'public', 'personas', `${id}.json`);
-  fs.mkdirSync(path.dirname(filePath), { recursive: true });
-  fs.writeFileSync(filePath, JSON.stringify(persona, null, 2));
+  // 📝 Save JSON
+  const personaPath = path.join(__dirname, 'public', 'personas', `${id}.json`);
+  fs.mkdirSync(path.dirname(personaPath), { recursive: true });
+  fs.writeFileSync(personaPath, JSON.stringify(persona, null, 2));
 
-  personas.push(persona);
-  res.json({ success: true, persona });
+  // 📄 Render profile
+  const templatePath = path.join(__dirname, 'public', 'templates', 'instagram-template.html');
+  const outputPath = path.join(__dirname, 'public', 'profiles', `${generatedNickname}.html`);
+  const template = fs.readFileSync(templatePath, 'utf-8');
+  const html = mustache.render(template, persona);
+
+  fs.mkdirSync(path.dirname(outputPath), { recursive: true });
+  fs.writeFileSync(outputPath, html);
+
+  res.json({ success: true, persona, profileUrl: `/profiles/${generatedNickname}.html` });
 });
 
+// Utility name generator
 function generateRandomName() {
-  const first = ['Jade', 'Lana', 'Maya', 'Ava', 'Zara', 'Nova', 'Skye', 'Rae'];
-  const last = ['Monroe', 'Blake', 'Reign', 'Storm', 'King', 'Brooks', 'James'];
-  const random = (arr) => arr[Math.floor(Math.random() * arr.length)];
-  return `${random(first)} ${random(last)}`;
+  const first = ['Lana', 'Nova', 'Ava', 'Zara'];
+  const last = ['Storm', 'James', 'Reign', 'Blake'];
+  return `${first[Math.floor(Math.random() * first.length)]} ${last[Math.floor(Math.random() * last.length)]}`;
 }
 
-// 📍 GPS Logger
-app.post('/log-location', (req, res) => {
-  const { path, coords } = req.body;
-  const matchedLink = links.find(l => l.link.startsWith(path));
-  if (matchedLink && matchedLink.logs.length > 0) {
-    matchedLink.logs[matchedLink.logs.length - 1].gps = coords;
-    return res.json({ success: true });
-  }
-  res.status(404).send('Link not found or no visit to attach location');
-});
-
-// 📊 Visual Report Page
-app.get('/report/view/:path', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'report.html'));
-});
-
-// 📄 Report Data API
-app.get('/api/report/:path', (req, res) => {
-  const matchedLink = links.find(l => l.link.startsWith(req.params.path));
-  if (matchedLink) {
-    res.json({
-      link: matchedLink.link,
-      destination: matchedLink.target,
-      totalClicks: matchedLink.logs.length,
-      type: matchedLink.type,
-      logs: matchedLink.logs
-    });
-  } else {
-    res.status(404).json({ error: 'Report not found' });
-  }
-});
-
-// 🚦 Redirect Handler
-app.get('/:path', (req, res) => {
-  const fullUrl = req.originalUrl.slice(1);
-  const matchedLink = links.find(l => l.link === fullUrl || l.link === req.params.path);
-
-  if (matchedLink) {
-    const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
-    const userAgent = req.headers['user-agent'];
-    const referrer = req.get('Referrer') || 'Direct';
-
-    matchedLink.logs.push({
-      time: new Date().toISOString(),
-      ip,
-      referrer,
-      userAgent
-    });
-
-    return res.redirect(matchedLink.target);
-  }
-
-  res.status(404).send('Link not found');
-});
-
+// Start the server
 app.listen(PORT, () => {
-  console.log(`🚀 SmartLink Tracker running at http://localhost:${PORT}`);
+  console.log(`✅ SmartLink backend running at http://localhost:${PORT}`);
 });

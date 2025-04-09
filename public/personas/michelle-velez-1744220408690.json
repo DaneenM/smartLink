@@ -1,0 +1,79 @@
+{
+  "id": "michelle-velez-1744220408690",
+  "name": "Michelle Velez",
+  "platform": "instagram",
+  "username": "user_1744220408691",
+  "age": "33",
+  "location": "Queens, NYC",
+  "niche": "Fitness coach",
+  "style": "Trendy sport outfits",
+  "race": "Latina",
+  "followers": "20K",
+  "bio": "Fitness coach influencer.",
+  "profileImage": "https://placehold.co/300x300?text=Image",
+  "posts": [
+    {
+      "image": "https://placehold.co/300x300?text=Image",
+      "caption": "Loving this vibe today ✨ #Fitnesscoach #Trendysportoutfits",
+      "likes": 2218,
+      "comments": 183,
+      "timestamp": "7h"
+    },
+    {
+      "image": "https://placehold.co/300x300?text=Image",
+      "caption": "Loving this vibe today ✨ #Fitnesscoach #Trendysportoutfits",
+      "likes": 4457,
+      "comments": 234,
+      "timestamp": "5h"
+    },
+    {
+      "image": "https://placehold.co/300x300?text=Image",
+      "caption": "Loving this vibe today ✨ #Fitnesscoach #Trendysportoutfits",
+      "likes": 2526,
+      "comments": 68,
+      "timestamp": "4h"
+    },
+    {
+      "image": "https://placehold.co/300x300?text=Image",
+      "caption": "Loving this vibe today ✨ #Fitnesscoach #Trendysportoutfits",
+      "likes": 4003,
+      "comments": 197,
+      "timestamp": "8h"
+    },
+    {
+      "image": "https://placehold.co/300x300?text=Image",
+      "caption": "Loving this vibe today ✨ #Fitnesscoach #Trendysportoutfits",
+      "likes": 1390,
+      "comments": 302,
+      "timestamp": "3h"
+    },
+    {
+      "image": "https://placehold.co/300x300?text=Image",
+      "caption": "Loving this vibe today ✨ #Fitnesscoach #Trendysportoutfits",
+      "likes": 606,
+      "comments": 298,
+      "timestamp": "8h"
+    },
+    {
+      "image": "https://placehold.co/300x300?text=Image",
+      "caption": "Loving this vibe today ✨ #Fitnesscoach #Trendysportoutfits",
+      "likes": 4176,
+      "comments": 267,
+      "timestamp": "1h"
+    },
+    {
+      "image": "https://placehold.co/300x300?text=Image",
+      "caption": "Loving this vibe today ✨ #Fitnesscoach #Trendysportoutfits",
+      "likes": 3328,
+      "comments": 33,
+      "timestamp": "4h"
+    },
+    {
+      "image": "https://placehold.co/300x300?text=Image",
+      "caption": "Loving this vibe today ✨ #Fitnesscoach #Trendysportoutfits",
+      "likes": 1150,
+      "comments": 304,
+      "timestamp": "10h"
+    }
+  ]
+}

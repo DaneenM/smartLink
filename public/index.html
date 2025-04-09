@@ -11,7 +11,6 @@
   <h1>SmartLink.io</h1>
   <div class="tagline">Track smarter. Share better.</div>
 
-  <!-- Standard SmartLink Form -->
   <div class="container" id="standardForm">
     <form id="linkForm">
       <label>
@@ -40,7 +39,6 @@
     <div id="copyMessage" class="copy-msg"></div>
   </div>
 
-  <!-- AI Persona Generator Feature -->
   <div class="container" style="margin-top: 40px;">
     <h3>🧠 Create a Social Persona</h3>
     <p style="font-size: 14px; color: #ccc; margin-bottom: 10px;">Use AI to build a realistic-looking profile for Instagram, TikTok, Facebook, X, or OnlyFans.</p>
@@ -63,9 +61,10 @@
     <label><strong>Location (City, Country):</strong><input type="text" id="location" placeholder="e.g., Miami, USA" /></label>
     <label><strong>Occupation or Niche:</strong><input type="text" id="niche" placeholder="e.g., Fashion Model or Fitness Coach" /></label>
     <label><strong>Style or Vibe:</strong><input type="text" id="style" placeholder="e.g., Luxury | Trendy | Boho | Streetwear" /></label>
+    <label><strong>Race or Ethnicity:</strong><input type="text" id="race" placeholder="e.g., Black, Latina, White, South Asian" /></label>
     <label><strong>Follower Count (optional):</strong><input type="text" id="followers" placeholder="e.g., 10K, 150K, 1M" /></label>
 
-    <button onclick="generatePersona()">Generate Fake Profile</button>
+    <button onclick="generatePersona()">Generate Agent Profile</button>
     <button onclick="clearPersonaForm()" style="margin-top: 10px; background-color: #dc3545; color: white; border: none; padding: 8px 14px; border-radius: 6px; cursor: pointer;">Start Over</button>
 
     <div id="personaPreview" class="persona-sample" style="display:none; margin-top: 20px; text-align: center; background-color: #1c1f26; padding: 20px; border-radius: 12px;">
@@ -76,6 +75,7 @@
       <p><strong>Platform:</strong> <span id="previewPlatform"></span></p>
       <p><strong>Location:</strong> <span id="previewLocation"></span></p>
       <p><strong>Style:</strong> <span id="previewStyle"></span></p>
+      <p><strong>Race:</strong> <span id="previewRace"></span></p>
     </div>
 
     <div id="personaOutput" class="desc" style="margin-top: 16px;"></div>
@@ -91,7 +91,7 @@
     }
 
     function clearPersonaForm() {
-      ['firstName', 'lastName', 'nickname', 'age', 'location', 'niche', 'style', 'followers'].forEach(id => {
+      ['firstName', 'lastName', 'nickname', 'age', 'location', 'niche', 'style', 'followers', 'race'].forEach(id => {
         document.getElementById(id).value = '';
       });
       document.getElementById('personaOutput').innerHTML = '';
@@ -108,8 +108,9 @@
       const niche = document.getElementById('niche').value.trim();
       const style = document.getElementById('style').value.trim();
       const followers = document.getElementById('followers').value.trim();
+      const race = document.getElementById('race').value.trim();
 
-      if (age && location && niche && style) {
+      if (age && location && niche && style && race) {
         document.getElementById('personaPreview').style.display = 'block';
         const nameStr = firstName || lastName ? `${firstName} ${lastName}`.trim() : '(AI-generated name)';
         const fakeUsername = nickname ? nickname : `(username based on AI)`;
@@ -120,10 +121,11 @@
         document.getElementById('previewPlatform').innerText = platform.toUpperCase();
         document.getElementById('previewLocation').innerText = location;
         document.getElementById('previewStyle').innerText = style;
+        document.getElementById('previewRace').innerText = race;
       }
     }
 
-    document.querySelectorAll('#firstName, #lastName, #nickname, #age, #location, #niche, #style, #followers, #platformSelect')
+    document.querySelectorAll('#firstName, #lastName, #nickname, #age, #location, #niche, #style, #followers, #platformSelect, #race')
       .forEach(el => el.addEventListener('input', updatePreview));
 
     async function generatePersona() {
@@ -135,10 +137,11 @@
       const location = document.getElementById('location').value.trim();
       const niche = document.getElementById('niche').value.trim();
       const style = document.getElementById('style').value.trim();
+      const race = document.getElementById('race').value.trim();
       const followers = document.getElementById('followers').value.trim();
       const output = document.getElementById('personaOutput');
 
-      if (!age || !location || !niche || !style) {
+      if (!age || !location || !niche || !style || !race) {
         return alert("Please complete all required fields.");
       }
 
@@ -148,12 +151,12 @@
         const res = await fetch('/generate-persona', {
           method: 'POST',
           headers: {'Content-Type': 'application/json'},
-          body: JSON.stringify({ platform, firstName, lastName, nickname, age, location, niche, style, followers })
+          body: JSON.stringify({ platform, firstName, lastName, nickname, age, location, niche, style, race, followers })
         });
 
         const data = await res.json();
         if (data.success) {
-          const { username, name, bio, profileImage } = data.persona;
+          const { username, name, bio, profileImage, id } = data.persona;
 
           document.getElementById('personaPreview').style.display = 'block';
           document.getElementById('previewUsername').innerText = `@${username}`;
@@ -162,9 +165,16 @@
           document.getElementById('previewPlatform').innerText = platform.toUpperCase();
           document.getElementById('previewLocation').innerText = location;
           document.getElementById('previewStyle').innerText = style;
+          document.getElementById('previewRace').innerText = race;
           document.getElementById('profileImage').src = profileImage;
 
-          output.innerHTML = '✅ Persona generated.';
+          await fetch('/generate-instagram-profile', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ personaId: id })
+          });
+
+          output.innerHTML = `✅ Persona generated. <br><a href="/profiles/${username}.html" target="_blank">👉 View Full Profile</a>`;
         } else {
           output.innerHTML = '❌ Failed to generate persona. Please try again.';
         }

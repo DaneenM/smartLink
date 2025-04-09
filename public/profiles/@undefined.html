@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>@ • Instagram photos and videos</title>
+  <link rel="stylesheet" href="/style.css" />
+  <style>
+    body {
+      background-color: #000;
+      color: #fff;
+      font-family: Arial, sans-serif;
+    }
+    .ig-container {
+      max-width: 935px;
+      margin: auto;
+      padding: 30px 20px;
+    }
+    .profile-header {
+      display: flex;
+      align-items: center;
+      gap: 30px;
+    }
+    .profile-pic {
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+    .profile-info {
+      flex-grow: 1;
+    }
+    .profile-info h2 {
+      font-size: 26px;
+      margin-bottom: 10px;
+    }
+    .stats {
+      display: flex;
+      gap: 20px;
+      margin-bottom: 10px;
+    }
+    .bio {
+      font-size: 14px;
+      color: #ccc;
+    }
+    .grid {
+      margin-top: 40px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 4px;
+    }
+    .grid img {
+      width: 100%;
+      height: 300px;
+      object-fit: cover;
+    }
+  </style>
+</head>
+<body>
+  <div class="ig-container">
+    <div class="profile-header">
+      <img src="https:&#x2F;&#x2F;ui-avatars.com&#x2F;api&#x2F;?name&#x3D;Lana%20James&amp;background&#x3D;random" alt="Profile picture" class="profile-pic">
+      <div class="profile-info">
+        <h2>@</h2>
+        <div class="stats">
+          <span><strong>45</strong> posts</span>
+          <span><strong>7000</strong> followers</span>
+          <span><strong>1,200</strong> following</span>
+        </div>
+        <div class="bio">
+          
+        </div>
+      </div>
+    </div>
+
+    <div class="grid">
+      <img src="/placeholders/1.jpg" alt="post">
+      <img src="/placeholders/2.jpg" alt="post">
+      <img src="/placeholders/3.jpg" alt="post">
+      <img src="/placeholders/4.jpg" alt="post">
+      <img src="/placeholders/5.jpg" alt="post">
+      <img src="/placeholders/6.jpg" alt="post">
+    </div>
+  </div>
+</body>
+</html>
