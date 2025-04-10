@@ -1,0 +1,24 @@
+{
+  "id": "lisa-moore-1744247897670",
+  "name": "Lisa Moore",
+  "platform": "instagram",
+  "username": "badgyal",
+  "age": "29",
+  "location": "Miami",
+  "niche": "Fashion Model",
+  "style": "Trendy",
+  "race": "Latina",
+  "gender": "female",
+  "followers": "23k",
+  "bio": "Fashion Model influencer from Miami. Style: Trendy.",
+  "profileImage": "/images/persona-1744248004225.png",
+  "posts": [
+    {
+      "image": "/images/persona-1744248004225.png",
+      "caption": "Loving this vibe today ✨ #FashionModel #Trendy",
+      "likes": 2347,
+      "comments": 300,
+      "timestamp": "1h"
+    }
+  ]
+}

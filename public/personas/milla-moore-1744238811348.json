@@ -1,0 +1,66 @@
+{
+  "id": "milla-moore-1744238811348",
+  "name": "Milla Moore",
+  "platform": "instagram",
+  "username": "badgyal",
+  "age": "29",
+  "location": "Jamaica",
+  "niche": "Fashion Model",
+  "style": "Trendy",
+  "race": "Black",
+  "gender": "female",
+  "followers": "13k",
+  "bio": "🌴 Jamaican fashion model spreading island vibes and trendy styles 🌺✨ #Fashionista #BlackGirlMagic 🇯🇲",
+  "profileImage": "https://placehold.co/300x300?text=Post",
+  "posts": [
+    {
+      "image": "https://placehold.co/300x300?text=Post",
+      "caption": "Loving this vibe today ✨ #FashionModel #Trendy",
+      "likes": 2507,
+      "comments": 267,
+      "timestamp": "5h"
+    },
+    {
+      "image": "https://placehold.co/300x300?text=Post",
+      "caption": "Loving this vibe today ✨ #FashionModel #Trendy",
+      "likes": 1733,
+      "comments": 10,
+      "timestamp": "5h"
+    },
+    {
+      "image": "https://placehold.co/300x300?text=Post",
+      "caption": "Loving this vibe today ✨ #FashionModel #Trendy",
+      "likes": 3363,
+      "comments": 301,
+      "timestamp": "1h"
+    },
+    {
+      "image": "https://placehold.co/300x300?text=Post",
+      "caption": "Loving this vibe today ✨ #FashionModel #Trendy",
+      "likes": 2393,
+      "comments": 63,
+      "timestamp": "3h"
+    },
+    {
+      "image": "https://placehold.co/300x300?text=Post",
+      "caption": "Loving this vibe today ✨ #FashionModel #Trendy",
+      "likes": 500,
+      "comments": 173,
+      "timestamp": "2h"
+    },
+    {
+      "image": "https://placehold.co/300x300?text=Post",
+      "caption": "Loving this vibe today ✨ #FashionModel #Trendy",
+      "likes": 2019,
+      "comments": 12,
+      "timestamp": "3h"
+    },
+    {
+      "image": "https://placehold.co/300x300?text=Post",
+      "caption": "Loving this vibe today ✨ #FashionModel #Trendy",
+      "likes": 1941,
+      "comments": 78,
+      "timestamp": "6h"
+    }
+  ]
+}

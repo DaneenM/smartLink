@@ -72,6 +72,12 @@
     <label><strong>Last Name (optional):</strong><input type="text" id="lastName" placeholder="e.g., Last name" /></label>
     <label><strong>Username Inspiration or Nickname:</strong><input type="text" id="nickname" placeholder="e.g., glamqueen or badgyal" /></label>
     <label><strong>Age:</strong><input type="number" id="age" placeholder="e.g., 28" /></label>
+    <label><strong>Gender:</strong>
+      <select id="gender">
+        <option value="female">Female</option>
+        <option value="male">Male</option>
+      </select>
+    </label>
     <label><strong>Location (City, Country):</strong><input type="text" id="location" placeholder="e.g., Miami, USA" /></label>
     <label><strong>Occupation or Niche:</strong><input type="text" id="niche" placeholder="e.g., Fashion Model or Fitness Coach" /></label>
     <label><strong>Style or Vibe:</strong><input type="text" id="style" placeholder="e.g., Luxury | Trendy | Boho | Streetwear" /></label>
@@ -140,7 +146,7 @@
       }
     }
 
-    document.querySelectorAll('#firstName, #lastName, #nickname, #age, #location, #niche, #style, #followers, #platformSelect, #race')
+    document.querySelectorAll('#firstName, #lastName, #nickname, #age, #location, #niche, #style, #followers, #platformSelect, #race, #gender')
       .forEach(el => el.addEventListener('input', updatePreview));
 
     async function generatePersona() {
@@ -149,6 +155,7 @@
       const lastName = document.getElementById('lastName').value.trim();
       const nickname = document.getElementById('nickname').value.trim();
       const age = document.getElementById('age').value.trim();
+      const gender = document.getElementById('gender').value;
       const location = document.getElementById('location').value.trim();
       const niche = document.getElementById('niche').value.trim();
       const style = document.getElementById('style').value.trim();
@@ -168,7 +175,7 @@
         const res = await fetch('/generate-persona', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ platform, firstName, lastName, nickname, age, location, niche, style, race, followers })
+          body: JSON.stringify({ platform, firstName, lastName, nickname, age, location, niche, style, race, gender, followers })
         });
 
         const data = await res.json();

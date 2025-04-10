@@ -1,0 +1,66 @@
+{
+  "id": "ava-reign-1744237786885",
+  "name": "Ava Reign",
+  "platform": "instagram",
+  "username": "badgyal",
+  "age": "29",
+  "location": "Brooklyn, New York",
+  "niche": "Fashion Model",
+  "style": "Trendy",
+  "race": "Balck",
+  "gender": "female",
+  "followers": "5k",
+  "bio": "Fashion model living in Brooklyn, NY 🖤 Embracing all things trendy and stylish ✨ #BlackGirlMagic #FashionInfluencer",
+  "profileImage": "https://placehold.co/300x300?text=Post",
+  "posts": [
+    {
+      "image": "https://placehold.co/300x300?text=Post",
+      "caption": "Loving this vibe today ✨ #FashionModel #Trendy",
+      "likes": 5057,
+      "comments": 35,
+      "timestamp": "10h"
+    },
+    {
+      "image": "https://placehold.co/300x300?text=Post",
+      "caption": "Loving this vibe today ✨ #FashionModel #Trendy",
+      "likes": 3911,
+      "comments": 53,
+      "timestamp": "5h"
+    },
+    {
+      "image": "https://placehold.co/300x300?text=Post",
+      "caption": "Loving this vibe today ✨ #FashionModel #Trendy",
+      "likes": 4228,
+      "comments": 282,
+      "timestamp": "6h"
+    },
+    {
+      "image": "https://placehold.co/300x300?text=Post",
+      "caption": "Loving this vibe today ✨ #FashionModel #Trendy",
+      "likes": 4522,
+      "comments": 20,
+      "timestamp": "2h"
+    },
+    {
+      "image": "https://placehold.co/300x300?text=Post",
+      "caption": "Loving this vibe today ✨ #FashionModel #Trendy",
+      "likes": 1252,
+      "comments": 30,
+      "timestamp": "7h"
+    },
+    {
+      "image": "https://placehold.co/300x300?text=Post",
+      "caption": "Loving this vibe today ✨ #FashionModel #Trendy",
+      "likes": 1436,
+      "comments": 301,
+      "timestamp": "4h"
+    },
+    {
+      "image": "https://placehold.co/300x300?text=Post",
+      "caption": "Loving this vibe today ✨ #FashionModel #Trendy",
+      "likes": 2209,
+      "comments": 25,
+      "timestamp": "1h"
+    }
+  ]
+}
