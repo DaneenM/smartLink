@@ -1,0 +1,24 @@
+{
+  "id": "robert-moore-1744249279550",
+  "name": "Robert Moore",
+  "platform": "instagram",
+  "username": "badboi",
+  "age": "29",
+  "location": "Miami",
+  "niche": "Rapper",
+  "style": "Streetwear",
+  "race": "Black",
+  "gender": "male",
+  "followers": "23k",
+  "bio": "Rapper influencer from Miami. Style: Streetwear.",
+  "profileImage": "/images/persona-1744249389032.png",
+  "posts": [
+    {
+      "image": "/images/persona-1744249389032.png",
+      "caption": "Loving this vibe today ✨ #Rapper #Streetwear",
+      "likes": 3448,
+      "comments": 161,
+      "timestamp": "1h"
+    }
+  ]
+}

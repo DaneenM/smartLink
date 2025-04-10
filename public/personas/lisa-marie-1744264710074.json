@@ -1,0 +1,109 @@
+{
+  "id": "lisa-marie-1744264710074",
+  "name": "Lisa Marie",
+  "platform": "instagram",
+  "username": "badgyal",
+  "age": "27",
+  "location": "Miami, FL",
+  "niche": "Fitness Modal",
+  "style": "Trendy",
+  "race": "Latina",
+  "gender": "female",
+  "followers": "11k",
+  "bio": "Fitness Modal influencer from Miami, FL. Style: Trendy.",
+  "profileImage": "/images/persona-1744257521338-8.png",
+  "posts": [
+    {
+      "image": "/images/persona-1744257521338-8.png",
+      "caption": "Loving this vibe today ✨ #FitnessModal #Trendy",
+      "likes": 1847,
+      "comments": 55,
+      "timestamp": "6h"
+    },
+    {
+      "image": "/images/persona-1744256674696-0.png",
+      "caption": "Loving this vibe today ✨ #FitnessModal #Trendy",
+      "likes": 3322,
+      "comments": 299,
+      "timestamp": "3h"
+    },
+    {
+      "image": "/images/persona-1744256887054-2.png",
+      "caption": "Loving this vibe today ✨ #FitnessModal #Trendy",
+      "likes": 4806,
+      "comments": 272,
+      "timestamp": "9h"
+    },
+    {
+      "image": "/images/persona-1744257098060-4.png",
+      "caption": "Loving this vibe today ✨ #FitnessModal #Trendy",
+      "likes": 105,
+      "comments": 54,
+      "timestamp": "1h"
+    },
+    {
+      "image": "/images/persona-1744258155703-14.png",
+      "caption": "Loving this vibe today ✨ #FitnessModal #Trendy",
+      "likes": 5098,
+      "comments": 35,
+      "timestamp": "1h"
+    },
+    {
+      "image": "/images/persona-1744257732001-10.png",
+      "caption": "Loving this vibe today ✨ #FitnessModal #Trendy",
+      "likes": 3713,
+      "comments": 23,
+      "timestamp": "4h"
+    },
+    {
+      "image": "/images/persona-1744258925829-20.png",
+      "caption": "Loving this vibe today ✨ #FitnessModal #Trendy",
+      "likes": 1331,
+      "comments": 229,
+      "timestamp": "4h"
+    },
+    {
+      "image": "/images/persona-1744258816965-19.png",
+      "caption": "Loving this vibe today ✨ #FitnessModal #Trendy",
+      "likes": 1625,
+      "comments": 152,
+      "timestamp": "2h"
+    },
+    {
+      "image": "/images/persona-1744261100932-34.png",
+      "caption": "Loving this vibe today ✨ #FitnessModal #Trendy",
+      "likes": 1301,
+      "comments": 260,
+      "timestamp": "4h"
+    },
+    {
+      "image": "/images/persona-1744264289376-47.png",
+      "caption": "Loving this vibe today ✨ #FitnessModal #Trendy",
+      "likes": 3649,
+      "comments": 31,
+      "timestamp": "10h"
+    },
+    {
+      "image": "/images/persona-1744264395989-48.png",
+      "caption": "Loving this vibe today ✨ #FitnessModal #Trendy",
+      "likes": 2808,
+      "comments": 245,
+      "timestamp": "1h"
+    },
+    {
+      "image": "/images/persona-1744262240266-42.png",
+      "caption": "Loving this vibe today ✨ #FitnessModal #Trendy",
+      "likes": 3509,
+      "comments": 281,
+      "timestamp": "10h"
+    },
+    {
+      "image": "/images/persona-1744261444905-37.png",
+      "caption": "Loving this vibe today ✨ #FitnessModal #Trendy",
+      "likes": 1300,
+      "comments": 25,
+      "timestamp": "2h"
+    }
+  ],
+  "postCount": 13
+}

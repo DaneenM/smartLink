@@ -18,6 +18,55 @@
       50% { opacity: 1; }
       100% { opacity: 0.2; }
     }
+
+    .photo-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+
+    .photo-modal-content {
+      background: #111;
+      padding: 20px;
+      border-radius: 12px;
+      max-height: 90vh;
+      overflow-y: auto;
+      width: 90%;
+      max-width: 800px;
+    }
+
+    .photo-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .photo-grid img {
+      width: 100%;
+      height: auto;
+      border-radius: 6px;
+      cursor: pointer;
+      border: 2px solid transparent;
+    }
+
+    .photo-grid img.selected {
+      border: 2px solid #00d8ff;
+    }
+
+    .photo-modal-actions {
+      margin-top: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
   </style>
 </head>
 <body>
@@ -56,7 +105,7 @@
   <div class="container" style="margin-top: 40px;">
     <h3>🧠 Create a Social Persona</h3>
     <p style="font-size: 14px; color: #ccc; margin-bottom: 10px;">Use AI to build a realistic-looking profile for Instagram, TikTok, Facebook, X, or OnlyFans.</p>
-
+  
     <label>
       <strong>Platform:</strong>
       <select id="platformSelect">
@@ -67,28 +116,55 @@
         <option value="onlyfans">OnlyFans</option>
       </select>
     </label>
-
-    <label><strong>First Name (optional):</strong><input type="text" id="firstName" placeholder="e.g., First name" /></label>
-    <label><strong>Last Name (optional):</strong><input type="text" id="lastName" placeholder="e.g., Last name" /></label>
-    <label><strong>Username Inspiration or Nickname:</strong><input type="text" id="nickname" placeholder="e.g., glamqueen or badgyal" /></label>
-    <label><strong>Age:</strong><input type="number" id="age" placeholder="e.g., 28" /></label>
+  
+    <label><strong>First Name (optional):</strong>
+      <input type="text" id="firstName" placeholder="e.g., First name" />
+    </label>
+  
+    <label><strong>Last Name (optional):</strong>
+      <input type="text" id="lastName" placeholder="e.g., Last name" />
+    </label>
+  
+    <label><strong>Username Inspiration or Nickname:</strong>
+      <input type="text" id="nickname" placeholder="e.g., glamqueen or badgyal" />
+    </label>
+  
+    <label><strong>Age:</strong>
+      <input type="number" id="age" placeholder="e.g., 28" />
+    </label>
+  
     <label><strong>Gender:</strong>
       <select id="gender">
         <option value="female">Female</option>
         <option value="male">Male</option>
       </select>
     </label>
-    <label><strong>Location (City, Country):</strong><input type="text" id="location" placeholder="e.g., Miami, USA" /></label>
-    <label><strong>Occupation or Niche:</strong><input type="text" id="niche" placeholder="e.g., Fashion Model or Fitness Coach" /></label>
-    <label><strong>Style or Vibe:</strong><input type="text" id="style" placeholder="e.g., Luxury | Trendy | Boho | Streetwear" /></label>
-    <label><strong>Race or Ethnicity:</strong><input type="text" id="race" placeholder="e.g., Black, Latina, White, South Asian" /></label>
-    <label><strong>Follower Count (optional):</strong><input type="text" id="followers" placeholder="e.g., 10K, 150K, 1M" /></label>
-
+  
+    <label><strong>Location (City, Country):</strong>
+      <input type="text" id="location" placeholder="e.g., Miami, USA" />
+    </label>
+  
+    <label><strong>Occupation or Niche:</strong>
+      <input type="text" id="niche" placeholder="e.g., Fashion Model or Fitness Coach" />
+    </label>
+  
+    <label><strong>Style or Vibe:</strong>
+      <input type="text" id="style" placeholder="e.g., Luxury | Trendy | Boho | Streetwear" />
+    </label>
+  
+    <label><strong>Race or Ethnicity:</strong>
+      <input type="text" id="race" placeholder="e.g., Black, Latina, White, South Asian" />
+    </label>
+  
+    <label><strong>Follower Count (optional):</strong>
+      <input type="text" id="followers" placeholder="e.g., 10K, 150K, 1M" />
+    </label>
+  
     <button id="generateBtn" onclick="generatePersona()">Generate Agent Profile</button>
     <button onclick="clearPersonaForm()" style="margin-top: 10px; background-color: #dc3545; color: white; border: none; padding: 8px 14px; border-radius: 6px; cursor: pointer;">Start Over</button>
-
+  
     <div id="personaPreview" class="persona-sample" style="display:none; margin-top: 20px; text-align: center; background-color: #1c1f26; padding: 20px; border-radius: 12px;">
-      <img id="profileImage" src="placeholder.png" alt="Profile" style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover; margin-bottom: 10px;">
+      <img id="profileImage" src="placeholder.png" style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover; margin-bottom: 10px;">
       <h4 id="previewUsername"></h4>
       <p id="previewName"></p>
       <p id="previewBio"></p>
@@ -97,11 +173,26 @@
       <p><strong>Style:</strong> <span id="previewStyle"></span></p>
       <p><strong>Race:</strong> <span id="previewRace"></span></p>
     </div>
-
+  
     <div id="personaOutput" class="desc loading"></div>
+  </div>
+  
+
+  <!-- Modal for Photo Selection -->
+  <div id="photoModal" class="photo-modal" style="display:none;">
+    <div class="photo-modal-content">
+      <h3 style="color:#00d8ff;">Select up to 25 photos</h3>
+      <div class="photo-grid" id="photoGrid"></div>
+      <div class="photo-modal-actions">
+        <span id="selectedCount" style="color:#ccc;">Selected: 0 / 25</span>
+        <button onclick="submitSelectedPhotos()" style="background:#00d8ff; color:#000; padding:10px 16px; border:none; border-radius:8px; cursor:pointer; font-weight:bold;">Finalize Persona</button>
+      </div>
+    </div>
   </div>
 
   <script>
+    let selectedPhotoUrls = [];
+
     function clearForm() {
       document.getElementById('targetURL').value = '';
       document.getElementById('customPath').value = '';
@@ -150,57 +241,96 @@
       .forEach(el => el.addEventListener('input', updatePreview));
 
     async function generatePersona() {
-      const platform = document.getElementById('platformSelect').value;
-      const firstName = document.getElementById('firstName').value.trim();
-      const lastName = document.getElementById('lastName').value.trim();
-      const nickname = document.getElementById('nickname').value.trim();
       const age = document.getElementById('age').value.trim();
-      const gender = document.getElementById('gender').value;
-      const location = document.getElementById('location').value.trim();
-      const niche = document.getElementById('niche').value.trim();
-      const style = document.getElementById('style').value.trim();
       const race = document.getElementById('race').value.trim();
-      const followers = document.getElementById('followers').value.trim();
-      const output = document.getElementById('personaOutput');
-      const btn = document.getElementById('generateBtn');
+      const gender = document.getElementById('gender').value;
+      const style = document.getElementById('style').value.trim();
+      const niche = document.getElementById('niche').value.trim();
 
-      if (!age || !location || !niche || !style || !race) {
+      const btn = document.getElementById('generateBtn');
+      const output = document.getElementById('personaOutput');
+
+      if (!age || !race || !gender || !style || !niche) {
         return alert("Please complete all required fields.");
       }
 
       btn.disabled = true;
-      output.innerHTML = '🧠 Generating persona and images... please wait 30–60 seconds';
+      output.innerHTML = '🧠 Generating persona and images... please wait 15–30 minutes';
 
-      try {
-        const res = await fetch('/generate-persona', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ platform, firstName, lastName, nickname, age, location, niche, style, race, gender, followers })
-        });
+      const res = await fetch('/generate-photos', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ age, race, gender, style, niche })
+      });
 
-        const data = await res.json();
-        if (data.success) {
-          const { username, name, bio, profileImage } = data.persona;
+      const data = await res.json();
+      if (data.success) {
+        showPhotoModal(data.imageUrls);
+      } else {
+        alert('Failed to generate photos');
+      }
 
-          document.getElementById('personaPreview').style.display = 'block';
-          document.getElementById('previewUsername').innerText = `@${username}`;
-          document.getElementById('previewName').innerText = `${name}, ${age}`;
-          document.getElementById('previewBio').innerText = bio || `${niche} | ${followers || 'New'} followers`;
-          document.getElementById('previewPlatform').innerText = platform.toUpperCase();
-          document.getElementById('previewLocation').innerText = location;
-          document.getElementById('previewStyle').innerText = style;
-          document.getElementById('previewRace').innerText = race;
-          document.getElementById('profileImage').src = profileImage;
+      btn.disabled = false;
+    }
 
-          output.innerHTML = `✅ Persona generated.<br><br><a href="${data.profileUrl}" target="_blank" style="display:inline-block; background:#00d8ff; color:#000; font-weight:600; padding:8px 16px; border-radius:8px; text-decoration:none;">👉 View Full Profile</a>`;
-        } else {
-          output.innerHTML = '❌ Failed to generate persona. Please try again.';
-        }
-      } catch (err) {
-        console.error(err);
-        output.innerHTML = '❌ Server error. Try again later.';
-      } finally {
-        btn.disabled = false;
+    function showPhotoModal(urls) {
+      const grid = document.getElementById('photoGrid');
+      grid.innerHTML = '';
+      selectedPhotoUrls = [];
+
+      urls.forEach(url => {
+        const img = document.createElement('img');
+        img.src = url;
+        img.onclick = () => togglePhotoSelect(img, url);
+        grid.appendChild(img);
+      });
+
+      document.getElementById('selectedCount').innerText = 'Selected: 0 / 25';
+      document.getElementById('photoModal').style.display = 'flex';
+    }
+
+    function togglePhotoSelect(img, url) {
+      const idx = selectedPhotoUrls.indexOf(url);
+      if (idx >= 0) {
+        selectedPhotoUrls.splice(idx, 1);
+        img.classList.remove('selected');
+      } else {
+        if (selectedPhotoUrls.length >= 25) return;
+        selectedPhotoUrls.push(url);
+        img.classList.add('selected');
+      }
+      document.getElementById('selectedCount').innerText = `Selected: ${selectedPhotoUrls.length} / 25`;
+    }
+
+    async function submitSelectedPhotos() {
+      if (selectedPhotoUrls.length < 1) return alert('Select at least 1 photo.');
+
+      const payload = {
+        platform: document.getElementById('platformSelect').value,
+        firstName: document.getElementById('firstName').value.trim(),
+        lastName: document.getElementById('lastName').value.trim(),
+        nickname: document.getElementById('nickname').value.trim(),
+        age: document.getElementById('age').value.trim(),
+        gender: document.getElementById('gender').value,
+        location: document.getElementById('location').value.trim(),
+        niche: document.getElementById('niche').value.trim(),
+        style: document.getElementById('style').value.trim(),
+        race: document.getElementById('race').value.trim(),
+        followers: document.getElementById('followers').value.trim(),
+        selectedPhotos: selectedPhotoUrls
+      };
+
+      const res = await fetch('/finalize-persona', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      const data = await res.json();
+      if (data.success) {
+        window.location.href = data.profileUrl;
+      } else {
+        alert('Error finalizing persona.');
       }
     }
   </script>
